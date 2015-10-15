@@ -1,0 +1,74 @@
+<div class = 'col-md-2' style = 'background-color:#F5F5F5;'>
+	<div class = 'row'>
+		<h3 style = 'color:blue;'><center><%= @city.name %></center></h3>
+	</div>
+	<hr>
+    <div id = 'scroll'>
+	    <% unless @places.blank? %>
+			<% @places.each do |place| %>
+				<div class="mouseover hangout_<%= place.id %>" style = 'line-height: 30px;'>
+					<% place_array = place.vicinity.split(",") unless place.vicinity.blank? %>		      
+					<% if place_array.count > 1 %>
+				    <%= place_array[-2] %> <br>
+				  <% else %> 
+						<%= place.name %><br>
+					<% end %>
+				</div>
+			<% end %>
+		<% else %>
+			<span style = 'color:red;'>There are no places for your selected combination inputs</span>
+	<% end %>
+    </div>
+</div>
+<div class = 'col-md-10'>
+   <div id="map" class="google_map_div"></div>
+
+</div>
+
+
+
+<script type="text/javascript">
+// Gmap
+  handler = Gmaps.build('Google');
+  handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
+  // city_marker = handler.addMarkers(<%= raw @geo_city.to_json %>);
+  hangout_markers = handler.addMarkers(<%= raw @geo_hash.to_json %>);
+
+  _.each(<%= raw @geo_hash.to_json %>, function(json, index){
+      json.marker = hangout_markers[index];
+      $(".hangout_" + json.id).on('mouseover', function() {
+        handler.getMap().setZoom(12);
+        json.marker.setMap(handler.getMap()); //because clusterer removes map property from marker
+        json.marker.panTo();
+        google.maps.event.trigger(json.marker.getServiceObject(), 'click');
+        json.marker.serviceObject.setIcon("http://localhost:3000/assets/marker_red_big.png");
+      }).on('mouseout', function() {
+       json.marker.serviceObject.setIcon("http://localhost:3000/assets/marker_red.png");
+      });
+  });
+  handler.bounds.extendWith(hangout_markers);
+  handler.fitMapToBounds();
+  });
+  handler.map.centerOn({ lat: <%= raw @geo_city[0][:lat] %>, lng: <%= raw @geo_city[0][:lng] %> })
+  handler.getMap().setZoom(12)
+</script>
+
+<style type="text/css">
+.google_map_div {
+  max-width: 100%;
+  height: 460px;
+}
+
+#scroll {
+  height: 360px;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.mouseover:hover{
+  background: #8FD8D8;
+}
+</style>

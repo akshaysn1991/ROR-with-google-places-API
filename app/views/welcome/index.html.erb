@@ -1,0 +1,14 @@
+<div class = 'container'>
+   <div class="row">
+        <% @cities.each do |city| %>  
+	        <div class="col-lg-3 col-md-3 col-sm-4">
+		        <div class="thumbnail">
+		           <%= link_to image_tag(city.image, :style => "width:300px;height:200px;") , {:controller => 'citylookup', :action => 'index', :city_id => city.id} %>
+				    <div class="caption">
+				     <h3><%= link_to city.name, {:controller => 'citylookup', :action => 'index', :city_id => city.id} %></h3>
+				     </div>
+				</div>
+	        </div>
+        <% end %>
+	</div>
+</div>

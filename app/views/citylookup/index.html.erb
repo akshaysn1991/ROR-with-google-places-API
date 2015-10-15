@@ -1,0 +1,14 @@
+<div class="alert alert-success"><center style = 'font-size:16px;'>Select your favourable inputs for the best location</center></div>
+<div style = 'margin:10px;'>
+	<div class = 'row' style = 'background-color:#F5F5F5;'>
+      <% @types.each do |type| %>
+         <div class="col-md-2">
+            <%= check_box_tag "place[#{type}]", type, false, :class => "types_filter", :onclick => "types_filter( #{params[:city_id]});" %>
+            <%= type.gsub("_", " ").capitalize %>
+         </div>
+      <% end %>
+	</div><br/><br/>
+	<div class = 'row' id = 'city_look_up'>
+		<%=  render :partial => "city_look_up_details" %>		
+	</div>
+</div>
